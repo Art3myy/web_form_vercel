@@ -1,6 +1,6 @@
-import { Redis } from '@upstash/redis';const redis = new Redis({  url: process.env.UPSTASH_REDIS_REST_URL,  token: process.env.UPSTASH_REDIS_REST_TOKEN,});export async function GET(request, { params }) {  const { searchParams } = new URL(request.url);  const token = searchParams.get('token');  if (token !== process.env.ADMIN_SECRET_KEY) {    return new Response('Unauthorized', { status: 401 });  }  const formId = params.formId;  try {    const submissions = await redis.lrange(`form:${formId}`, 0, -1);    let markdown = `# Submissions for ${formId}
+import { createClient } from 'redis';const redis = createClient({  url: process.env.REDIS_URL});redis.on('error', (err) => console.error('Redis Client Error', err));await redis.connect();export async function GET(request, { params }) {  const { searchParams } = new URL(request.url);  const token = searchParams.get('token');  if (token !== process.env.ADMIN_SECRET_KEY) {    return new Response('Unauthorized', { status: 401 });  }  const formId = params.formId;  try {    const submissions = await redis.lRange(`form:${formId}`, 0, -1);    let markdown = `# Submissions for ${formId}
 
-`;    markdown += submissions      .map(submission => {        let entry = `**Submitted At:** ${submission.submittedAt}
+`;    markdown += submissions      .map(submissionStr => {        const submission = JSON.parse(submissionStr);        let entry = `**Submitted At:** ${submission.submittedAt}
 `;        for (const [key, value] of Object.entries(submission.answers)) {          entry += `*   **${key}:** ${value}
 `;        }        return entry;      })      .join('
 ---

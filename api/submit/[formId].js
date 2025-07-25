@@ -1,16 +1,18 @@
-import { Redis } from '@upstash/redis';
+import { createClient } from 'redis';
 import { readFile } from 'fs/promises';
 import matter from 'gray-matter';
 import { resolve } from 'path';
 
-const redis = new Redis({
-  url: process.env.UPSTASH_REDIS_REST_URL,
-  token: process.env.UPSTASH_REDIS_REST_TOKEN,
+const redis = createClient({
+  url: process.env.REDIS_URL
 });
 
-export async function POST(request) {
-  const { pathname } = new URL(request.url);
-  const formId = pathname.split('/').pop();
+redis.on('error', (err) => console.error('Redis Client Error', err));
+
+await redis.connect();
+
+export async function POST(request, { params }) {
+  const formId = params.formId;
   const filePath = resolve(process.cwd(), 'forms', `${formId}.md`);
 
   try {
@@ -35,7 +37,7 @@ export async function POST(request) {
       answers: submission.answers,
     };
 
-    await redis.lpush(`form:${formId}`, newSubmission);
+    await redis.lPush(`form:${formId}`, JSON.stringify(newSubmission));
 
     return new Response(JSON.stringify({ message: 'Submission successful' }), { status: 200, headers: { 'Content-Type': 'application/json' } });
   } catch (error) {
