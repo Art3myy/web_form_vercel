@@ -1,4 +1,3 @@
-import { kv } from '@vercel/kv';
 import { readdir, readFile } from 'fs/promises';
 import matter from 'gray-matter';
 import { resolve } from 'path';

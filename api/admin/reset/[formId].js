@@ -1,4 +1,9 @@
-import { kv } from '@vercel/kv';
+import { Redis } from '@upstash/redis';
+
+const redis = new Redis({
+  url: process.env.UPSTASH_REDIS_REST_URL,
+  token: process.env.UPSTASH_REDIS_REST_TOKEN,
+});
 
 export async function POST(request, { params }) {
   const { searchParams } = new URL(request.url);
@@ -10,9 +15,10 @@ export async function POST(request, { params }) {
 
   const formId = params.formId;
   try {
-    await kv.del(`form:${formId}`);
+    await redis.del(`form:${formId}`);
     return new Response(`Submissions for ${formId} have been reset.`, { status: 200 });
   } catch (error) {
+    console.error(error);
     return new Response('Error resetting submissions', { status: 500 });
   }
 }
