@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feedback Forms</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <h1>Available Feedback Forms</h1>
+    <ul id="form-list"></ul>
+
+    <script>
+        async function fetchForms() {
+            const response = await fetch('/api/forms');
+            const forms = await response.json();
+            const formList = document.getElementById('form-list');
+
+            forms.forEach(form => {
+                const listItem = document.createElement('li');
+                const link = document.createElement('a');
+                link.href = `/form/${form.formId}`;
+                link.textContent = form.title;
+                listItem.appendChild(link);
+                formList.appendChild(listItem);
+            });
+        }
+
+        fetchForms();
+    </script>
+</body>
+</html>

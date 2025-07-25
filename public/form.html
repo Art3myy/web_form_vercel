@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Form</title>
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+    <div class="form-container">
+        <h1 id="form-title"></h1>
+        <div id="form-description"></div>
+        <form id="dynamic-form"></form>
+    </div>
+
+    <script>
+        async function renderForm() {
+            const formId = window.location.pathname.split('/').pop();
+            const response = await fetch(`/api/forms/${formId}`);
+            const form = await response.json();
+
+            document.getElementById('form-title').textContent = form.title;
+            document.getElementById('form-description').innerHTML = form.description;
+
+            const dynamicForm = document.getElementById('dynamic-form');
+
+            form.questions.forEach(q => {
+                const group = document.createElement('div');
+                group.className = 'form-group';
+
+                const label = document.createElement('label');
+                label.textContent = q.label;
+                group.appendChild(label);
+
+                if (q.type === 'text') {
+                    const input = document.createElement('input');
+                    input.type = 'text';
+                    input.name = q.id;
+                    input.placeholder = q.placeholder || '';
+                    if (q.required) input.required = true;
+                    group.appendChild(input);
+                } else if (q.type === 'textarea') {
+                    const textarea = document.createElement('textarea');
+                    textarea.name = q.id;
+                    if (q.required) textarea.required = true;
+                    group.appendChild(textarea);
+                } else if (q.type === 'radio') {
+                    q.options.forEach(opt => {
+                        const radioLabel = document.createElement('label');
+                        const radio = document.createElement('input');
+                        radio.type = 'radio';
+                        radio.name = q.id;
+                        radio.value = opt;
+                        if (q.required) radio.required = true;
+
+                        radioLabel.appendChild(radio);
+                        radioLabel.appendChild(document.createTextNode(opt));
+                        group.appendChild(radioLabel);
+                    });
+                }
+
+                dynamicForm.appendChild(group);
+            });
+
+            const submitButton = document.createElement('button');
+            submitButton.type = 'submit';
+            submitButton.textContent = 'Submit';
+            dynamicForm.appendChild(submitButton);
+
+            dynamicForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const formData = new FormData(e.target);
+                const answers = {};
+                for (const [key, value] of formData.entries()) {
+                    answers[key] = value;
+                }
+
+                await fetch(`/api/submit/${formId}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ answers }),
+                });
+
+                alert('Thank you for your submission!');
+                window.location.href = '/';
+            });
+        }
+
+        renderForm();
+    </script>
+</body>
+</html>
