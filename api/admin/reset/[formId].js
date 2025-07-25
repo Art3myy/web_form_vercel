@@ -6,8 +6,6 @@ const redis = createClient({
 
 redis.on('error', (err) => console.error('Redis Client Error', err));
 
-await redis.connect();
-
 export async function POST(request, { params }) {
   const { searchParams } = new URL(request.url);
   const token = searchParams.get('token');
@@ -18,6 +16,9 @@ export async function POST(request, { params }) {
 
   const formId = params.formId;
   try {
+    if (!redis.isOpen) {
+      await redis.connect();
+    }
     await redis.del(`form:${formId}`);
     return new Response(`Submissions for ${formId} have been reset.`, { status: 200 });
   } catch (error) {

@@ -9,13 +9,15 @@ const redis = createClient({
 
 redis.on('error', (err) => console.error('Redis Client Error', err));
 
-await redis.connect();
-
 export async function POST(request, { params }) {
   const formId = params.formId;
   const filePath = resolve(process.cwd(), 'forms', `${formId}.md`);
 
   try {
+    if (!redis.isOpen) {
+      await redis.connect();
+    }
+
     const fileContent = await readFile(filePath, 'utf-8');
     const { data } = matter(fileContent);
     const submission = await request.json();
