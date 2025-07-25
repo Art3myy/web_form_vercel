@@ -9,8 +9,9 @@ const redis = createClient({
 
 redis.on('error', (err) => console.error('Redis Client Error', err));
 
-export async function POST(request, { params }) {
-  const formId = params.formId;
+export async function POST(request) {
+  const { pathname } = new URL(request.url);
+  const formId = pathname.split('/').pop();
   const filePath = resolve(process.cwd(), 'forms', `${formId}.md`);
 
   try {

@@ -6,15 +6,15 @@ const redis = createClient({
 
 redis.on('error', (err) => console.error('Redis Client Error', err));
 
-export async function POST(request, { params }) {
-  const { searchParams } = new URL(request.url);
+export async function POST(request) {
+  const { pathname, searchParams } = new URL(request.url);
+  const formId = pathname.split('/').pop();
   const token = searchParams.get('token');
 
   if (token !== process.env.ADMIN_SECRET_KEY) {
     return new Response('Unauthorized', { status: 401 });
   }
 
-  const formId = params.formId;
   try {
     if (!redis.isOpen) {
       await redis.connect();
