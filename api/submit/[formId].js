@@ -8,8 +8,9 @@ const redis = new Redis({
   token: process.env.UPSTASH_REDIS_REST_TOKEN,
 });
 
-export async function POST(request, { params }) {
-  const formId = params.formId;
+export async function POST(request) {
+  const { pathname } = new URL(request.url);
+  const formId = pathname.split('/').pop();
   const filePath = resolve(process.cwd(), 'forms', `${formId}.md`);
 
   try {
@@ -24,8 +25,8 @@ export async function POST(request, { params }) {
 
     for (const field of requiredFields) {
       if (!submission.answers[field]) {
-        return new Response(`Missing required field: ${field}`,
-          { status: 400 });
+        return new Response(JSON.stringify({ error: `Missing required field: ${field}` }),
+          { status: 400, headers: { 'Content-Type': 'application/json' } });
       }
     }
 
@@ -36,12 +37,12 @@ export async function POST(request, { params }) {
 
     await redis.lpush(`form:${formId}`, newSubmission);
 
-    return new Response('Submission successful', { status: 200 });
+    return new Response(JSON.stringify({ message: 'Submission successful' }), { status: 200, headers: { 'Content-Type': 'application/json' } });
   } catch (error) {
+    console.error('Error in /api/submit/[formId]:', error);
     if (error.code === 'ENOENT') {
-      return new Response('Form not found', { status: 404 });
+      return new Response(JSON.stringify({ error: 'Form not found' }), { status: 404, headers: { 'Content-Type': 'application/json' } });
     }
-    console.error(error);
-    return new Response('Error processing submission', { status: 500 });
+    return new Response(JSON.stringify({ error: 'Error processing submission' }), { status: 500, headers: { 'Content-Type': 'application/json' } });
   }
 }
