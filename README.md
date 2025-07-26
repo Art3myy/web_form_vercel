@@ -90,21 +90,10 @@ If you want to run the project on your local machine:
 -   The filename becomes the form's URL slug (e.g., `new-product-survey.md` will be accessible at `/form/new-product-survey`).
 -   Define the form structure using YAML frontmatter as shown in the existing `customer-satisfaction.md` example.
 
-### Accessing Admin Endpoints
+### Admin Dashboard
 
-These endpoints require your `ADMIN_SECRET_KEY` to be passed as a URL query parameter.
+To manage forms, download responses, and reset data, visit the admin dashboard:
 
-#### Download Submissions
+`https://<your-site-url>/admin`
 
-To download all submissions for a form as a Markdown file, construct a URL as follows and open it in your browser:
-
-`https://<your-site-url>/api/admin/download/[formId]?token=<your-admin-secret-key>`
-
--   **[formId]**: The ID of the form (e.g., `customer-satisfaction`).
--   **<your-admin-secret-key>**: The secret key you configured.
-
-#### Reset Submissions
-
-To delete all submissions for a form, send a POST request to the following URL (e.g., using `curl` or an API tool like Postman):
-
-`https://<your-site-url>/api/admin/reset/[formId]?token=<your-admin-secret-key>`
+You will be prompted to enter your `ADMIN_SECRET_KEY` to access the dashboard.

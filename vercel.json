@@ -1,5 +1,6 @@
 {
   "rewrites": [
-    { "source": "/form/:formId", "destination": "/form.html" }
+    { "source": "/form/:formId", "destination": "/form.html" },
+    { "source": "/admin", "destination": "/admin.html" }
   ]
 }
