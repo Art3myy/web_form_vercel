@@ -3,21 +3,15 @@ import { readFile } from 'fs/promises';
 import matter from 'gray-matter';
 import { resolve } from 'path';
 
-const redis = createClient({
-  url: process.env.REDIS_URL
-});
-
-redis.on('error', (err) => console.error('Redis Client Error', err));
-
 export async function POST(request) {
   const { pathname } = new URL(request.url);
   const formId = pathname.split('/').pop();
   const filePath = resolve(process.cwd(), 'forms', `${formId}.md`);
 
   try {
-    if (!redis.isOpen) {
-      await redis.connect();
-    }
+    const redis = createClient({ url: process.env.REDIS_URL });
+    redis.on('error', (err) => console.error('Redis Client Error', err));
+    await redis.connect();
 
     const fileContent = await readFile(filePath, 'utf-8');
     const { data } = matter(fileContent);
@@ -41,6 +35,7 @@ export async function POST(request) {
     };
 
     await redis.lPush(`form:${formId}`, JSON.stringify(newSubmission));
+    await redis.quit();
 
     return new Response(JSON.stringify({ message: 'Submission successful' }), { status: 200, headers: { 'Content-Type': 'application/json' } });
   } catch (error) {

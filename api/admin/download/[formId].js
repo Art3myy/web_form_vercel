@@ -1,3 +1,5 @@
+import { createClient } from 'redis';
+
 export async function GET(request) {
   const { pathname, searchParams } = new URL(request.url);
   const formId = pathname.split('/').pop();
@@ -7,7 +9,34 @@ export async function GET(request) {
     return new Response('Unauthorized', { status: 401 });
   }
 
-  return new Response(`This is a test for formId: ${formId}. The endpoint is working.`, {
-    headers: { 'Content-Type': 'text/plain' },
-  });
+  try {
+    const redis = createClient({ url: process.env.REDIS_URL });
+    redis.on('error', (err) => console.error('Redis Client Error', err));
+    await redis.connect();
+
+    const submissions = await redis.lRange(`form:${formId}`, 0, -1);
+    await redis.quit();
+
+    let markdown = `# Submissions for ${formId}\n\n`;
+    markdown += submissions
+      .map(submissionStr => {
+        const submission = JSON.parse(submissionStr);
+        let entry = `**Submitted At:** ${submission.submittedAt}\n`;
+        for (const [key, value] of Object.entries(submission.answers)) {
+          entry += `*   **${key}:** ${value}\n`;
+        }
+        return entry;
+      })
+      .join('\n---\n');
+
+    return new Response(markdown, {
+      headers: {
+        'Content-Type': 'text/markdown',
+        'Content-Disposition': `attachment; filename="${formId}_submissions.md"`,
+      },
+    });
+  } catch (error) {
+    console.error(error);
+    return new Response('Error fetching submissions', { status: 500 });
+  }
 }

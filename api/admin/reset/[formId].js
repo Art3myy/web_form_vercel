@@ -1,11 +1,5 @@
 import { createClient } from 'redis';
 
-const redis = createClient({
-  url: process.env.REDIS_URL
-});
-
-redis.on('error', (err) => console.error('Redis Client Error', err));
-
 export async function POST(request) {
   const { pathname, searchParams } = new URL(request.url);
   const formId = pathname.split('/').pop();
@@ -16,10 +10,13 @@ export async function POST(request) {
   }
 
   try {
-    if (!redis.isOpen) {
-      await redis.connect();
-    }
+    const redis = createClient({ url: process.env.REDIS_URL });
+    redis.on('error', (err) => console.error('Redis Client Error', err));
+    await redis.connect();
+
     await redis.del(`form:${formId}`);
+    await redis.quit();
+
     return new Response(`Submissions for ${formId} have been reset.`, { status: 200 });
   } catch (error) {
     console.error(error);
