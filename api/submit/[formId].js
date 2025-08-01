@@ -29,12 +29,7 @@ export async function POST(request) {
       }
     }
 
-    const newSubmission = {
-      submittedAt: new Date().toISOString(),
-      answers: submission.answers,
-    };
-
-    await redis.lPush(`form:${formId}`, JSON.stringify(newSubmission));
+    await redis.lPush(`form:${formId}`, JSON.stringify(submission.answers));
     await redis.quit();
 
     return new Response(JSON.stringify({ message: 'Submission successful' }), { status: 200, headers: { 'Content-Type': 'application/json' } });

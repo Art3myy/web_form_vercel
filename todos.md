@@ -27,3 +27,5 @@
 5. Change the text on title page to "Использование генеративного ИИ в работе" and subtitle "Формы обратной связи (сделано с использованием ИИ)".
 
 6. Change popup text when form is submitted - both title (you can remove it completely) and text ("Спасибо за обратную связь")
+
+7. Remove storing timestamp when recording responses - those are not needed. Also the .md file with responses (that admin can download) should be preceded with the title and list of questions asked - to map q1, q2 etc. in the responses to specific questions.
