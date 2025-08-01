@@ -25,3 +25,5 @@
 4. Generate 10 responses for one of the forms. Assume different roles within HR team to do that (some responses can be from the same role). Save them in <form_name>dummy_responses.md.
 
 5. Change the text on title page to "Использование генеративного ИИ в работе" and subtitle "Формы обратной связи (сделано с использованием ИИ)".
+
+6. Change popup text when form is submitted - both title (you can remove it completely) and text ("Спасибо за обратную связь")

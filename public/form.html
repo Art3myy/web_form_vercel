@@ -93,8 +93,8 @@
                             const errorData = await submitResponse.json();
                             throw new Error(errorData.error || `HTTP error! status: ${submitResponse.status}`);
                         }
-                        alert('Thank you for your submission!');
-                        window.location.href = '/';
+                        const formContainer = document.querySelector('.form-container');
+                        formContainer.innerHTML = '<h2>Спасибо за обратную связь!</h2><p><a href="/">На главную</a></p>';
                     } catch (error) {
                         errorContainer.textContent = `Error submitting form: ${error.message}`;
                     }

@@ -1,8 +1,8 @@
 ## Form URLs
 
-- [Упражнение: Работа с текстом](https://<your-site-url>/form/text-manipulation)
-- [Упражнение: Анализ](https://<your-site-url>/form/analysis)
-- [Упражнение: Обучение и консультирование](https://<your-site-url>/form/training-and-consulting)
-- [Упражнение: Создание презентаций](https://<your-site-url>/form/presentation-creation)
-- [Упражнение: Коучинг и симуляции](https://<your-site-url>/form/coaching-and-simulations)
-- [Финальная рефлексия по тренингу](https://<your-site-url>/form/final-reflection)
+- [Упражнение: Работа с текстом](https://web-form-vercel.vercel.app/form/text-manipulation)
+- [Упражнение: Анализ](https://web-form-vercel.vercel.app/form/analysis)
+- [Упражнение: Обучение и консультирование](https://web-form-vercel.vercel.app/form/training-and-consulting)
+- [Упражнение: Создание презентаций](https://web-form-vercel.vercel.app/form/presentation-creation)
+- [Упражнение: Коучинг и симуляции](https://web-form-vercel.vercel.app/form/coaching-and-simulations)
+- [Финальная рефлексия по тренингу](https://web-form-vercel.vercel.app/form/final-reflection)
