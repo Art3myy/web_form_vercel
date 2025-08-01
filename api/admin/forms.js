@@ -29,7 +29,22 @@ export async function GET(request) {
           };
         })
     );
-    return new Response(JSON.stringify(forms), {
+    const formOrder = [
+      'text-manipulation',
+      'analysis',
+      'training-and-consulting',
+      'presentation-creation',
+      'coaching-and-simulations',
+      'final-reflection'
+    ];
+
+    const sortedForms = forms.sort((a, b) => {
+      const indexA = formOrder.indexOf(a.formId);
+      const indexB = formOrder.indexOf(b.formId);
+      return indexA - indexB;
+    });
+
+    return new Response(JSON.stringify(sortedForms), {
       headers: { 'Content-Type': 'application/json' },
     });
   } catch (error) {
