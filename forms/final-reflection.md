@@ -10,7 +10,7 @@ questions:
     type: "textarea"
     required: false
   - id: "q3"
-    label: "Какие у вас остались вопросы или опасения по поводу использования ИИ?"
+    label: "Какие у вас остались вопросы по поводу использования ИИ?"
     type: "textarea"
     required: false
 ---
